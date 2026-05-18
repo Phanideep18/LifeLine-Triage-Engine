@@ -1,6 +1,11 @@
 from DAA_MODULE.sample_data import patients
 from DAA_MODULE.patient import select_patient_details
-from DAA_MODULE.sorting import run_quick_sort, quick_sort, display_patients
+from DAA_MODULE.sorting import (
+    run_quick_sort,
+    run_insertion_sort,
+    quick_sort,
+    display_patients,
+)
 
 from OS_MODULE.scheduling import priority_scheduling, round_robin
 from DAA_MODULE.dynamic_arrival import add_dynamic_patient
@@ -13,6 +18,7 @@ display_patients(patients)
 
 print("\n========== DAA MODULE ==========")
 run_quick_sort(patients)
+run_insertion_sort(patients)
 
 sorted_patients = quick_sort(patients)
 

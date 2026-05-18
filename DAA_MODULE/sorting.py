@@ -44,6 +44,26 @@ def _has_higher_triage_order(patient, other_patient):
     return patient.arrival_time < other_patient.arrival_time
 
 
+# Insertion Sort (Descending Priority)
+def insertion_sort(patients):
+
+    sorted_patients = patients.copy()
+
+    for i in range(1, len(sorted_patients)):
+        current_patient = sorted_patients[i]
+        j = i - 1
+
+        while j >= 0 and _has_higher_triage_order(
+            current_patient, sorted_patients[j]
+        ):
+            sorted_patients[j + 1] = sorted_patients[j]
+            j -= 1
+
+        sorted_patients[j + 1] = current_patient
+
+    return sorted_patients
+
+
 # Run Quick Sort and display timing
 def run_quick_sort(patients):
 
@@ -64,3 +84,25 @@ def run_quick_sort(patients):
     print("Worst Time Complexity: O(n^2)\n")
 
     return quick_sorted
+
+
+# Run Insertion Sort and display timing
+def run_insertion_sort(patients):
+
+    print("\n========== INSERTION SORT ==========\n")
+
+    start = time.time()
+
+    insertion_sorted = insertion_sort(patients)
+
+    end = time.time()
+
+    insertion_time = end - start
+
+    print("INSERTION SORT OUTPUT:")
+    display_patients(insertion_sorted)
+    print(f"Insertion Sort Time: {insertion_time:.10f} seconds")
+    print("Best Time Complexity: O(n)")
+    print("Average/Worst Time Complexity: O(n^2)\n")
+
+    return insertion_sorted
