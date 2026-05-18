@@ -44,6 +44,7 @@ const patients = [
 let quickSorted = [];
 let insertionSorted = [];
 let scheduledPatients = [];
+let selectedPatientId = "P5";
 
 function calculatePriority(patient) {
   let score = patient.severity;
@@ -194,6 +195,22 @@ function renderScheduleRows() {
   });
 }
 
+function renderTimeline() {
+  const target = document.getElementById("scheduleTimeline");
+  target.innerHTML = scheduledPatients
+    .map((patient) => `
+      <button class="timeline-item" type="button" data-pid="${patient.pid}">
+        <strong>${patient.pid}</strong>
+        <span>${patient.completionTime} min</span>
+      </button>
+    `)
+    .join("");
+
+  target.querySelectorAll(".timeline-item").forEach((item) => {
+    item.addEventListener("click", () => showPatientDetails(item.dataset.pid));
+  });
+}
+
 function renderMetrics() {
   const totalWaiting = scheduledPatients.reduce((sum, patient) => sum + patient.waitingTime, 0);
   const totalTurnaround = scheduledPatients.reduce((sum, patient) => sum + patient.turnaroundTime, 0);
@@ -225,6 +242,7 @@ function showPatientDetails(patientId) {
   const hint = document.getElementById("detailHint");
 
   if (!patient) {
+    selectedPatientId = "";
     card.innerHTML = `
       <div class="patient-avatar">ID</div>
       <h3>No patient found</h3>
@@ -232,10 +250,12 @@ function showPatientDetails(patientId) {
     `;
     grid.innerHTML = "";
     hint.textContent = "No matching patient ID.";
+    highlightSelectedPatient();
     switchTab("details");
     return;
   }
 
+  selectedPatientId = patient.pid;
   const [statusText, statusClass] = statusFor(patient);
   card.innerHTML = `
     <div class="patient-avatar">${patient.pid.replace("P", "")}</div>
@@ -269,7 +289,14 @@ function showPatientDetails(patientId) {
 
   document.getElementById("patientSearch").value = patient.pid;
   hint.textContent = "Complete scheduling details for the selected patient.";
+  highlightSelectedPatient();
   switchTab("details");
+}
+
+function highlightSelectedPatient() {
+  document.querySelectorAll("[data-pid]").forEach((element) => {
+    element.classList.toggle("selected", element.dataset.pid === selectedPatientId);
+  });
 }
 
 function switchTab(tabId) {
@@ -305,6 +332,7 @@ function render() {
   renderPatientRows("quickRows", quickSorted);
   renderPatientRows("insertionRows", insertionSorted);
   renderScheduleRows();
+  renderTimeline();
   showPatientDetails("P5");
   switchTab("overview");
 }

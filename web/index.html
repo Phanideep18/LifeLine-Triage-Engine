@@ -10,7 +10,7 @@
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-mark">+</div>
+        <div class="brand-mark">L</div>
         <div>
           <h1>LifeLine</h1>
           <p>Triage Engine</p>
@@ -18,11 +18,16 @@
       </div>
 
       <nav class="nav-tabs" aria-label="Dashboard sections">
-        <button class="nav-tab active" data-tab="overview">Overview</button>
-        <button class="nav-tab" data-tab="sorting">Sorting</button>
-        <button class="nav-tab" data-tab="schedule">Scheduling</button>
-        <button class="nav-tab" data-tab="details">Patient Details</button>
+        <button class="nav-tab active" data-tab="overview"><span>01</span>Overview</button>
+        <button class="nav-tab" data-tab="sorting"><span>02</span>Sorting</button>
+        <button class="nav-tab" data-tab="schedule"><span>03</span>Scheduling</button>
+        <button class="nav-tab" data-tab="details"><span>04</span>Patient Details</button>
       </nav>
+
+      <div class="sidebar-note">
+        <span class="pulse-dot"></span>
+        Live simulation data
+      </div>
     </aside>
 
     <main class="content">
@@ -30,6 +35,7 @@
         <div>
           <p class="eyebrow">Emergency queue simulation</p>
           <h2>Hospital Triage Dashboard</h2>
+          <p class="topbar-copy">Priority scores combine vitals, severity, arrival time, and treatment duration.</p>
         </div>
         <div class="search-box">
           <label for="patientSearch">Patient ID</label>
@@ -45,18 +51,22 @@
           <article class="metric-card critical">
             <span>Total Patients</span>
             <strong id="totalPatients">0</strong>
+            <small>Patients in queue</small>
           </article>
           <article class="metric-card">
             <span>Highest Priority</span>
             <strong id="highestPriority">0</strong>
+            <small>Maximum triage score</small>
           </article>
           <article class="metric-card">
             <span>Avg Waiting</span>
             <strong id="avgWaiting">0 min</strong>
+            <small>Before treatment starts</small>
           </article>
           <article class="metric-card">
             <span>Avg Turnaround</span>
             <strong id="avgTurnaround">0 min</strong>
+            <small>Arrival to completion</small>
           </article>
         </div>
 
@@ -140,6 +150,7 @@
             <p>Times are shown in minutes.</p>
           </div>
         </div>
+        <div class="timeline" id="scheduleTimeline" aria-label="Priority schedule timeline"></div>
         <div class="table-wrap">
           <table>
             <thead>
