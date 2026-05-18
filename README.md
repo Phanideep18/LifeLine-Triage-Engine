@@ -7,20 +7,20 @@
 
 ## Problem Statement
 
-City General Hospital's ER receives dozens of patients simultaneously during peak hours. Manual triage by nurses is slow and error-prone, costing critical minutes. **LifeLine** is an automated triage system that intelligently prioritizes patients based on medical vitals and assigns them to treatment slots using advanced scheduling algorithms.
+City General Hospital's ER receives dozens of patients simultaneously during peak hours. Manual triage by nurses is slow and error-prone, costing critical minutes. **LifeLine** is an automated triage system that prioritizes patients based on their medical vitals and applies OS scheduling algorithms to optimize treatment workflow.
 
 ---
 
 ## Concepts Implemented
 
 ### DAA — Design & Analysis of Algorithms
-| Algorithm | Time Complexity | Space Complexity | Used When |
+| Algorithm | Time Complexity | Space Complexity | Use Case |
 |---|---|---|---|
-| Selection Sort | O(n²) | O(1) | Small batches (≤ 10 patients) |
-| Merge Sort | O(n log n) | O(n) | Large queues (> 10 patients) |
+| Quick Sort | O(n log n) avg | O(log n) | Primary sorting algorithm for patient prioritization |
 
-- Both algorithms are implemented and compared side-by-side with actual execution time measurements
-- A comparison report shows time difference between Selection Sort and Merge Sort
+- Quick Sort uses a divide-and-conquer approach with mid-point pivot selection
+- Efficiently sorts patients in descending priority order with arrival time as tiebreaker
+- Single execution time measurement displayed with average and worst-case complexity analysis
 
 ### OS — Operating Systems
 | Scheduler | Type | Purpose |
@@ -28,12 +28,13 @@ City General Hospital's ER receives dozens of patients simultaneously during pea
 | Priority Scheduling | Non-preemptive | Highest priority patient treated first to completion |
 | Round Robin | Preemptive | Each patient gets a fixed time quantum (3 min), then re-queued |
 
-- Each patient is modelled as a **process** with burst time (treatment duration) and arrival time
+- Each patient is modeled as a **process** with burst time (treatment duration) and arrival time
 - Both schedulers produce a **Gantt chart**, per-patient **waiting time**, **turnaround time**, and averages
 
 ### Bonus Features
-- **Aging mechanism** — patients waiting beyond a threshold (5 time units) automatically receive a priority boost (+2), preventing starvation of low-priority patients
-- **Dynamic arrivals** — new patients can be added mid-simulation; the queue is instantly re-sorted and re-scheduled
+- **Aging mechanism** — Patients waiting beyond a threshold (5 time units) automatically receive a priority boost (+2), preventing starvation of low-priority patients
+- **Dynamic arrivals** — New patients can be added mid-simulation; the queue is instantly re-sorted and re-scheduled
+- **Patient detail view** — Interactive feature to query individual patient information including vitals and scheduling times
 
 ---
 
@@ -60,7 +61,7 @@ LifeLine-Triage-Engine/
 ├── DAA_MODULE/
 │   ├── patient.py             ← Patient class definition
 │   ├── sample_data.py         ← Pre-loaded patient dataset (25 patients)
-│   ├── sorting.py             ← Selection Sort & Merge Sort implementations
+│   ├── sorting.py             ← Quick Sort implementation
 │   └── dynamic_arrival.py     ← Function to add new patients mid-simulation
 ├── OS_MODULE/
 │   ├── scheduling.py          ← Priority Scheduling & Round Robin implementations
@@ -81,13 +82,14 @@ python main.py
 This will execute the complete simulation:
 1. Load 25 initial patients
 2. Display original patient queue
-3. Run sorting comparison (Selection Sort vs Merge Sort)
+3. Run Quick Sort with timing analysis
 4. Execute Priority Scheduling algorithm
 5. Execute Round Robin scheduling algorithm
 6. Apply aging mechanism
 7. Add a dynamic patient arrival
 8. Re-sort the updated queue
 9. Display final scheduling results
+10. Interactive patient detail view
 
 ---
 
@@ -108,9 +110,9 @@ P3 | Kiran | Priority: 20
 
 ========== DAA MODULE ==========
 
-========== SORTING COMPARISON ==========
+========== QUICK SORT ==========
 
-SELECTION SORT OUTPUT:
+QUICK SORT OUTPUT:
 ========================================
 PATIENT QUEUE
 ========================================
@@ -119,20 +121,9 @@ P11 | Anil | Priority: 24
 P16 | Ritika | Priority: 24
 ...
 ========================================
-Selection Sort Time: 0.0001234567 seconds
-Time Complexity: O(n^2)
-
-MERGE SORT OUTPUT:
-========================================
-PATIENT QUEUE
-========================================
-P5 | Arjun | Priority: 24
-P11 | Anil | Priority: 24
-P16 | Ritika | Priority: 24
-...
-========================================
-Merge Sort Time: 0.0000876543 seconds
-Time Complexity: O(n log n)
+Quick Sort Time: 0.0001234567 seconds
+Average Time Complexity: O(n log n)
+Worst Time Complexity: O(n^2)
 
 Final Sorted Queue Sent from DAA Module to OS Module:
 ========================================
@@ -151,7 +142,7 @@ Gantt Chart:
 0    7    13   19   24   30    36    42    48    54    60    66    72    78    84   88   92   95   98   102  106  110  114  117  120  123
 
 Patient Scheduling Table:
-PID	Priority		Arrival	Burst	Waiting	Turnaround	Completion
+PID	Priority	Arrival	Burst	Waiting	Turnaround	Completion
 P5	24		4	7	0	7	11
 ...
 Average Waiting Time: 50.64
@@ -169,6 +160,8 @@ P1	0	6	12	18	18
 ...
 Average Waiting Time: 54.88
 Average Turnaround Time: 60.88
+
+========== BONUS FEATURES ==========
 
 ========== AGING MECHANISM ==========
 
@@ -190,9 +183,29 @@ P5 | Arjun | Priority: 24
 ...
 ========================================
 
-Final Scheduling After Aging and Dynamic Arrival:
-========== PRIORITY SCHEDULING ==========
+========== PATIENT DETAIL VIEW ==========
+
+Enter Patient ID to view full details.
+Enter Q to exit.
+
+1. P1 | Rahul | Priority: 21
+2. P2 | Asha | Priority: 12
 ...
+
+Patient ID: P1
+
+Patient ID       : P1
+Name             : Rahul
+Arrival Time     : 0 minutes
+Heart Rate       : 130
+Blood Pressure   : 90
+Oxygen Level     : 85
+Severity         : 9
+Burst Time       : 6 minutes
+Priority Score   : 21
+Waiting Time     : 0 minutes
+Turnaround Time  : 6 minutes
+Completion Time  : 6 minutes
 ```
 
 ---
@@ -216,17 +229,21 @@ Plus **1 dynamic patient** (P26) that arrives mid-simulation.
 
 ## Key Design Decisions
 
-**Why two sorting algorithms?** The system intelligently chooses based on queue size. Selection Sort excels with small datasets due to lower overhead, while Merge Sort's O(n log n) complexity dominates with larger queues.
+**Why Quick Sort?** Quick Sort provides optimal O(n log n) average-case performance with minimal space overhead, making it ideal for real-time triage environments where speed is critical. The mid-point pivot strategy ensures good distribution even with varied patient priorities.
 
 **Why non-preemptive Priority Scheduling?** In a real ER, interrupting a doctor mid-procedure is harmful. Non-preemptive priority reflects actual clinical workflows where patient continuity is critical.
 
 **Why Round Robin as well?** It models scenarios with multiple treatment stations sharing workload fairly, ensuring no single high-priority patient monopolizes resources indefinitely.
 
-**Why aging?** Pure priority scheduling starves low-priority patients indefinitely. The aging boost (after 5 time units) ensures everyone eventually receives treatment, mirroring real-world triage policies where wait time itself becomes a severity factor.
+**Why aging?** Pure priority scheduling starves low-priority patients indefinitely. The aging boost (after 5 time units) ensures everyone eventually receives treatment, mirroring real-world triage policies that prevent indefinite waiting.
+
+**Why patient detail view?** Interactive patient querying allows medical staff to quickly access complete vitals and scheduling information for any patient in the system, improving situational awareness during high-volume admissions.
 
 ---
 
-## Patient Class (`DAA_MODULE/patient.py`)
+## Module Documentation
+
+### Patient Class (`DAA_MODULE/patient.py`)
 
 Each patient is represented with:
 - **Basic Details:** Patient ID, Name, Arrival Time
@@ -234,19 +251,17 @@ Each patient is represented with:
 - **Severity:** Symptom severity score
 - **Treatment Time:** Burst time (minutes to treat)
 - **Priority:** Dynamically calculated based on vitals
+- **`display()`** method for detailed patient information output
+- **`calculate_priority()`** method for vitals-based scoring
 
----
+### Sorting Module (`DAA_MODULE/sorting.py`)
 
-## Sorting Module (`DAA_MODULE/sorting.py`)
-
-- **`selection_sort(patients)`** — O(n²) sort in descending priority order
-- **`merge_sort(patients)`** — O(n log n) sort in descending priority order
-- **`compare_sorting_algorithms(patients)`** — Runs both and displays timing comparison
+- **`quick_sort(patients)`** — O(n log n) quicksort in descending priority order with arrival time tiebreaker
+- **`_has_higher_triage_order(patient, other_patient)`** — Comparison function for sorting logic
+- **`run_quick_sort(patients)`** — Runs Quick Sort with timing measurement and complexity display
 - **`display_patients(patients)`** — Pretty-prints the patient queue
 
----
-
-## Scheduling Module (`OS_MODULE/scheduling.py`)
+### Scheduling Module (`OS_MODULE/scheduling.py`)
 
 - **`priority_scheduling(patients)`** — Non-preemptive scheduling by priority
   - Produces Gantt chart, waiting times, turnaround times, and averages
@@ -257,18 +272,14 @@ Each patient is represented with:
   - Re-queues if burst time remains
   - Produces identical output format for easy comparison
 
----
-
-## Aging Module (`OS_MODULE/aging.py`)
+### Aging Module (`OS_MODULE/aging.py`)
 
 - **`apply_aging(patients, current_time, threshold=5, boost=2)`** — Anti-starvation mechanism
   - Scans patient queue at simulation time `current_time`
   - Any patient waiting ≥ `threshold` gets priority boost of `+boost`
   - Prevents indefinite starvation of low-severity patients
 
----
-
-## Dynamic Arrival Module (`DAA_MODULE/dynamic_arrival.py`)
+### Dynamic Arrival Module (`DAA_MODULE/dynamic_arrival.py`)
 
 - **`add_dynamic_patient(patients)`** — Simulates an emergency patient arriving mid-simulation
   - Creates a new Patient object (P26 by default)
@@ -278,26 +289,30 @@ Each patient is represented with:
 
 ---
 
-## How It All Flows
+## Simulation Flow
 
 ```
 main.py (Entry Point)
   ├─> Load sample patients from DAA_MODULE/sample_data.py
   ├─> Display original queue
-  ├─> DAA Module: Run sorting comparison
-  │   ├─> Selection Sort vs Merge Sort
+  ├─> DAA Module: Quick Sort
+  │   ├─> Sort by priority (descending), with arrival time tiebreaker
   │   └─> Display timing results
-  ├─> Sort patients using Merge Sort
+  ├─> Display sorted queue
   ├─> OS Module: Priority Scheduling
   │   ├─> Generate Gantt chart
   │   └─> Calculate average wait & turnaround time
   ├─> OS Module: Round Robin Scheduling
   │   ├─> Generate Gantt chart with time quantum
   │   └─> Calculate average wait & turnaround time
-  ├─> Apply Aging mechanism
-  ├─> Add dynamic patient arrival
-  ├─> Re-sort with updated priorities
-  └─> Final scheduling with all changes
+  ├─> Bonus Features Section:
+  │   ├─> Apply Aging mechanism
+  │   ├─> Add dynamic patient arrival
+  │   ├─> Re-sort with updated priorities
+  │   ├─> Display updated queue
+  │   ├─> Final Priority Scheduling
+  │   └─> Interactive Patient Detail View
+  └─> Exit
 ```
 
 ---
@@ -305,4 +320,3 @@ main.py (Entry Point)
 ## Authors
 
 Built for **Hackathon PS-01** — LifeLine: Hospital Emergency Triage Engine
-
