@@ -7,7 +7,7 @@
 
 ## Problem Statement
 
-City General Hospital's ER receives dozens of patients simultaneously during peak hours. Manual triage by nurses is slow and error-prone, costing critical minutes. **LifeLine** is an automated triage system that prioritizes patients based on their medical vitals and applies OS scheduling algorithms to optimize treatment workflow.
+City General Hospital's ER receives dozens of patients simultaneously during peak hours. Manual triage by nurses is slow and error-prone, costing critical minutes. **LifeLine** is an automated triage [...]
 
 ---
 
@@ -17,10 +17,17 @@ City General Hospital's ER receives dozens of patients simultaneously during pea
 | Algorithm | Time Complexity | Space Complexity | Use Case |
 |---|---|---|---|
 | Quick Sort | O(n log n) avg | O(log n) | Primary sorting algorithm for patient prioritization |
+| Insertion Sort | O(n²) avg/worst, O(n) best | O(1) | Alternative sorting algorithm for comparison; efficient for small datasets |
 
-- Quick Sort uses a divide-and-conquer approach with mid-point pivot selection
-- Efficiently sorts patients in descending priority order with arrival time as tiebreaker
-- Single execution time measurement displayed with average and worst-case complexity analysis
+- **Quick Sort** uses a divide-and-conquer approach with mid-point pivot selection
+  - Efficiently sorts patients in descending priority order with arrival time as tiebreaker
+  - Single execution time measurement displayed with average and worst-case complexity analysis
+
+- **Insertion Sort** builds the sorted array one item at a time by inserting elements into their correct position
+  - Efficient for small or nearly-sorted datasets
+  - O(n) best case when array is already sorted
+  - O(n²) average and worst case for random/reverse-sorted data
+  - Lower space overhead compared to Quick Sort
 
 ### OS — Operating Systems
 | Scheduler | Type | Purpose |
@@ -61,7 +68,7 @@ LifeLine-Triage-Engine/
 ├── DAA_MODULE/
 │   ├── patient.py             ← Patient class definition
 │   ├── sample_data.py         ← Pre-loaded patient dataset (25 patients)
-│   ├── sorting.py             ← Quick Sort implementation
+│   ├── sorting.py             ← Quick Sort & Insertion Sort implementations
 │   └── dynamic_arrival.py     ← Function to add new patients mid-simulation
 ├── OS_MODULE/
 │   ├── scheduling.py          ← Priority Scheduling & Round Robin implementations
@@ -83,13 +90,14 @@ This will execute the complete simulation:
 1. Load 25 initial patients
 2. Display original patient queue
 3. Run Quick Sort with timing analysis
-4. Execute Priority Scheduling algorithm
-5. Execute Round Robin scheduling algorithm
-6. Apply aging mechanism
-7. Add a dynamic patient arrival
-8. Re-sort the updated queue
-9. Display final scheduling results
-10. Interactive patient detail view
+4. Run Insertion Sort with timing analysis
+5. Execute Priority Scheduling algorithm
+6. Execute Round Robin scheduling algorithm
+7. Apply aging mechanism
+8. Add a dynamic patient arrival
+9. Re-sort the updated queue
+10. Display final scheduling results
+11. Interactive patient detail view
 
 ---
 
@@ -124,6 +132,21 @@ P16 | Ritika | Priority: 24
 Quick Sort Time: 0.0001234567 seconds
 Average Time Complexity: O(n log n)
 Worst Time Complexity: O(n^2)
+
+========== INSERTION SORT ==========
+
+INSERTION SORT OUTPUT:
+========================================
+PATIENT QUEUE
+========================================
+P5 | Arjun | Priority: 24
+P11 | Anil | Priority: 24
+P16 | Ritika | Priority: 24
+...
+========================================
+Insertion Sort Time: 0.0002345678 seconds
+Best Time Complexity: O(n)
+Average/Worst Time Complexity: O(n^2)
 
 Final Sorted Queue Sent from DAA Module to OS Module:
 ========================================
@@ -229,15 +252,17 @@ Plus **1 dynamic patient** (P26) that arrives mid-simulation.
 
 ## Key Design Decisions
 
-**Why Quick Sort?** Quick Sort provides optimal O(n log n) average-case performance with minimal space overhead, making it ideal for real-time triage environments where speed is critical. The mid-point pivot strategy ensures good distribution even with varied patient priorities.
+**Why Quick Sort?** Quick Sort provides optimal O(n log n) average-case performance with minimal space overhead, making it ideal for real-time triage environments where speed is critical. The mid-point pivot selection ensures balanced partitions.
+
+**Why Insertion Sort?** Insertion Sort offers O(1) space complexity and O(n) best-case performance, making it efficient for small datasets or nearly-sorted patient queues. It's also useful for comparing performance characteristics with Quick Sort on this dataset.
 
 **Why non-preemptive Priority Scheduling?** In a real ER, interrupting a doctor mid-procedure is harmful. Non-preemptive priority reflects actual clinical workflows where patient continuity is critical.
 
 **Why Round Robin as well?** It models scenarios with multiple treatment stations sharing workload fairly, ensuring no single high-priority patient monopolizes resources indefinitely.
 
-**Why aging?** Pure priority scheduling starves low-priority patients indefinitely. The aging boost (after 5 time units) ensures everyone eventually receives treatment, mirroring real-world triage policies that prevent indefinite waiting.
+**Why aging?** Pure priority scheduling starves low-priority patients indefinitely. The aging boost (after 5 time units) ensures everyone eventually receives treatment, mirroring real-world triage policies.
 
-**Why patient detail view?** Interactive patient querying allows medical staff to quickly access complete vitals and scheduling information for any patient in the system, improving situational awareness during high-volume admissions.
+**Why patient detail view?** Interactive patient querying allows medical staff to quickly access complete vitals and scheduling information for any patient in the system, improving situational awareness.
 
 ---
 
@@ -257,8 +282,10 @@ Each patient is represented with:
 ### Sorting Module (`DAA_MODULE/sorting.py`)
 
 - **`quick_sort(patients)`** — O(n log n) quicksort in descending priority order with arrival time tiebreaker
+- **`insertion_sort(patients)`** — O(n²) insertion sort in descending priority order with arrival time tiebreaker
 - **`_has_higher_triage_order(patient, other_patient)`** — Comparison function for sorting logic
 - **`run_quick_sort(patients)`** — Runs Quick Sort with timing measurement and complexity display
+- **`run_insertion_sort(patients)`** — Runs Insertion Sort with timing measurement and complexity display
 - **`display_patients(patients)`** — Pretty-prints the patient queue
 
 ### Scheduling Module (`OS_MODULE/scheduling.py`)
@@ -298,7 +325,10 @@ main.py (Entry Point)
   ├─> DAA Module: Quick Sort
   │   ├─> Sort by priority (descending), with arrival time tiebreaker
   │   └─> Display timing results
-  ├─> Display sorted queue
+  ├─> DAA Module: Insertion Sort
+  │   ├─> Sort by priority (descending), with arrival time tiebreaker
+  │   └─> Display timing results
+  ├─> Display sorted queue (Quick Sort result)
   ├─> OS Module: Priority Scheduling
   │   ├─> Generate Gantt chart
   │   └─> Calculate average wait & turnaround time
