@@ -14,100 +14,53 @@ def display_patients(patients):
     print("========================================\n")
 
 
-# Selection Sort (Descending Priority)
-def selection_sort(patients):
-
-    sorted_patients = patients.copy()
-
-    n = len(sorted_patients)
-
-    for i in range(n):
-
-        max_index = i
-
-        for j in range(i + 1, n):
-
-            if sorted_patients[j].priority > sorted_patients[max_index].priority:
-                max_index = j
-
-        # Swap
-        sorted_patients[i], sorted_patients[max_index] = (
-            sorted_patients[max_index],
-            sorted_patients[i],
-        )
-
-    return sorted_patients
-
-
-# Merge Function
-def merge(left, right):
-
-    result = []
-
-    i = 0
-    j = 0
-
-    while i < len(left) and j < len(right):
-
-        if left[i].priority >= right[j].priority:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-
-    # Remaining elements
-    result.extend(left[i:])
-    result.extend(right[j:])
-
-    return result
-
-
-# Merge Sort
-def merge_sort(patients):
+# Quick Sort (Descending Priority)
+def quick_sort(patients):
 
     if len(patients) <= 1:
-        return patients
+        return patients.copy()
 
-    mid = len(patients) // 2
+    pivot = patients[len(patients) // 2]
 
-    left_half = merge_sort(patients[:mid])
-    right_half = merge_sort(patients[mid:])
+    higher_priority = []
+    same_priority = []
+    lower_priority = []
 
-    return merge(left_half, right_half)
+    for patient in patients:
+        if _has_higher_triage_order(patient, pivot):
+            higher_priority.append(patient)
+        elif _has_higher_triage_order(pivot, patient):
+            lower_priority.append(patient)
+        else:
+            same_priority.append(patient)
+
+    return quick_sort(higher_priority) + same_priority + quick_sort(lower_priority)
 
 
-# Compare Sorting Algorithms
-def compare_sorting_algorithms(patients):
+def _has_higher_triage_order(patient, other_patient):
+    if patient.priority != other_patient.priority:
+        return patient.priority > other_patient.priority
 
-    print("\n========== SORTING COMPARISON ==========\n")
+    return patient.arrival_time < other_patient.arrival_time
 
-    # Selection Sort Timing
+
+# Run Quick Sort and display timing
+def run_quick_sort(patients):
+
+    print("\n========== QUICK SORT ==========\n")
+
     start = time.time()
 
-    selection_sorted = selection_sort(patients)
+    quick_sorted = quick_sort(patients)
 
     end = time.time()
 
-    selection_time = end - start
+    quick_time = end - start
 
-    print("SELECTION SORT OUTPUT:")
-    display_patients(selection_sorted)
+    print("QUICK SORT OUTPUT:")
+    display_patients(quick_sorted)
+    print(f"Quick Sort Time: {quick_time:.10f} seconds")
+    print("Average Time Complexity: O(n log n)")
+    print("Worst Time Complexity: O(n^2)\n")
 
-    print(f"Selection Sort Time: {selection_time:.10f} seconds")
-    print("Time Complexity: O(n^2)\n")
-
-    # Merge Sort Timing
-    start = time.time()
-
-    merge_sorted = merge_sort(patients)
-
-    end = time.time()
-
-    merge_time = end - start
-
-    print("MERGE SORT OUTPUT:")
-    display_patients(merge_sorted)
-
-    print(f"Merge Sort Time: {merge_time:.10f} seconds")
-    print("Time Complexity: O(n log n)\n")
+    return quick_sorted

@@ -1,4 +1,6 @@
 class Patient:
+    TIME_UNIT = "minutes"
+
     def __init__(
         self,
         pid,
@@ -52,14 +54,54 @@ class Patient:
 
     # Display patient details
     def display(self):
+        waiting_time = getattr(self, "waiting_time", "N/A")
+        turnaround_time = getattr(self, "turnaround_time", "N/A")
+        completion_time = getattr(self, "completion_time", "N/A")
+
         print(f"""
 Patient ID       : {self.pid}
 Name             : {self.name}
-Arrival Time     : {self.arrival_time}
+Arrival Time     : {self.arrival_time} {self.TIME_UNIT}
 Heart Rate       : {self.heart_rate}
 Blood Pressure   : {self.blood_pressure}
 Oxygen Level     : {self.oxygen_level}
 Severity         : {self.severity}
-Burst Time       : {self.burst_time}
+Burst Time       : {self.burst_time} {self.TIME_UNIT}
 Priority Score   : {self.priority}
+Waiting Time     : {waiting_time} {self.TIME_UNIT if waiting_time != "N/A" else ""}
+Turnaround Time  : {turnaround_time} {self.TIME_UNIT if turnaround_time != "N/A" else ""}
+Completion Time  : {completion_time} {self.TIME_UNIT if completion_time != "N/A" else ""}
 """)
+
+
+def select_patient_details(patients):
+    print("\n========== PATIENT DETAIL VIEW ==========\n")
+    print("Enter Patient ID to view full details.")
+    print("Enter Q to exit.\n")
+
+    for index, patient in enumerate(patients, start=1):
+        print(f"{index}. {patient.pid} | {patient.name} | Priority: {patient.priority}")
+
+    patients_by_id = {patient.pid.upper(): patient for patient in patients}
+
+    while True:
+        try:
+            choice = input("\nPatient ID: ").strip()
+        except EOFError:
+            print("\nDetail view skipped because no input was provided.")
+            return
+
+        if choice.lower() == "q":
+            print("Exiting patient detail view.")
+            return
+
+        normalized_choice = choice.upper().replace(" ", "")
+        if normalized_choice.isdigit():
+            normalized_choice = "P" + normalized_choice
+
+        selected_patient = patients_by_id.get(normalized_choice)
+
+        if selected_patient:
+            selected_patient.display()
+        else:
+            print("Invalid Patient ID. Please enter a valid ID like P1, P5, or P26.")
