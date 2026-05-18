@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeLine Triage Engine</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">+</div>
+        <div>
+          <h1>LifeLine</h1>
+          <p>Triage Engine</p>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Dashboard sections">
+        <button class="nav-tab active" data-tab="overview">Overview</button>
+        <button class="nav-tab" data-tab="sorting">Sorting</button>
+        <button class="nav-tab" data-tab="schedule">Scheduling</button>
+        <button class="nav-tab" data-tab="details">Patient Details</button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Emergency queue simulation</p>
+          <h2>Hospital Triage Dashboard</h2>
+        </div>
+        <div class="search-box">
+          <label for="patientSearch">Patient ID</label>
+          <div class="search-row">
+            <input id="patientSearch" type="text" placeholder="P5 or 5">
+            <button id="searchButton">View</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="overview" class="tab-panel active">
+        <div class="metrics-grid">
+          <article class="metric-card critical">
+            <span>Total Patients</span>
+            <strong id="totalPatients">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Highest Priority</span>
+            <strong id="highestPriority">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Avg Waiting</span>
+            <strong id="avgWaiting">0 min</strong>
+          </article>
+          <article class="metric-card">
+            <span>Avg Turnaround</span>
+            <strong id="avgTurnaround">0 min</strong>
+          </article>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <h3>Current Patient Queue</h3>
+            <p>Sorted by priority, then earlier arrival time.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Name</th>
+                <th>Priority</th>
+                <th>Arrival</th>
+                <th>Vitals</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="overviewRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sorting" class="tab-panel">
+        <div class="split-layout">
+          <article class="panel">
+            <div class="section-header compact">
+              <div>
+                <h3>Quick Sort</h3>
+                <p>Average O(n log n), worst O(n^2)</p>
+              </div>
+              <strong id="quickTime">0.0000 ms</strong>
+            </div>
+            <div class="table-wrap compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>Priority</th>
+                    <th>Arrival</th>
+                  </tr>
+                </thead>
+                <tbody id="quickRows"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="section-header compact">
+              <div>
+                <h3>Insertion Sort</h3>
+                <p>Best O(n), average/worst O(n^2)</p>
+              </div>
+              <strong id="insertionTime">0.0000 ms</strong>
+            </div>
+            <div class="table-wrap compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>Priority</th>
+                    <th>Arrival</th>
+                  </tr>
+                </thead>
+                <tbody id="insertionRows"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="schedule" class="tab-panel">
+        <div class="section-header">
+          <div>
+            <h3>Priority Scheduling</h3>
+            <p>Times are shown in minutes.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Name</th>
+                <th>Priority</th>
+                <th>Arrival</th>
+                <th>Burst</th>
+                <th>Waiting</th>
+                <th>Turnaround</th>
+                <th>Completion</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="details" class="tab-panel">
+        <div class="detail-layout">
+          <article class="patient-card" id="patientCard"></article>
+          <article class="panel">
+            <div class="section-header compact">
+              <div>
+                <h3>Clinical Attributes</h3>
+                <p id="detailHint">Select a row or search by Patient ID.</p>
+              </div>
+            </div>
+            <div class="detail-grid" id="detailGrid"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
